@@ -7,16 +7,17 @@ const containerStyle = {
 };
 
 const center = {
-    lat: -3.745,
-    lng: -38.523
+    lat: 0,
+    lng: 0
 };
 
-const LiveTracking = () => {
-    const [ currentPosition, setCurrentPosition ] = useState(center);
+const LiveTracking = ({ initialPosition = center }) => {
+    const [ currentPosition, setCurrentPosition ] = useState(initialPosition);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
+            console.log('Initial Position:', latitude, longitude);
             setCurrentPosition({
                 lat: latitude,
                 lng: longitude
@@ -25,6 +26,7 @@ const LiveTracking = () => {
 
         const watchId = navigator.geolocation.watchPosition((position) => {
             const { latitude, longitude } = position.coords;
+            console.log('Updated Position:', latitude, longitude); 
             setCurrentPosition({
                 lat: latitude,
                 lng: longitude

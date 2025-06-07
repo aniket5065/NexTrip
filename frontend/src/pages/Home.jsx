@@ -68,11 +68,12 @@ const Home = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
 
-            })
+            });
+            console.log(response.data)
             setPickupSuggestions(response.data)
-        } catch {
-            // handle error
-        }
+        } catch (err) {
+        console.error('Error fetching pickup suggestions:', err.message);
+    }
     }
 
     const handleDestinationChange = async (e) => {
@@ -84,10 +85,11 @@ const Home = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
+            console.log(response.data)
             setDestinationSuggestions(response.data)
-        } catch {
-            // handle error
-        }
+        }catch (err) {
+        console.error('Error fetching destination suggestions:', err.message);
+    }
     }
 
     const submitHandler = (e) => {

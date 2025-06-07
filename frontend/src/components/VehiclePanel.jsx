@@ -13,7 +13,7 @@ const VehiclePanel = (props) => {
             }} className='flex border-2 active:border-black  mb-2 rounded-xl w-full p-3  items-center justify-between'>
                 <img className='h-10' src="https://swyft.pl/wp-content/uploads/2023/05/how-many-people-can-a-uberx-take.jpg" alt="" />
                 <div className='ml-2 w-1/2'>
-                    <h4 className='font-medium text-base'>UberGo <span><i className="ri-user-3-fill"></i>4</span></h4>
+                    <h4 className='font-medium text-base'>CabGo <span><i className="ri-user-3-fill"></i>4</span></h4>
                     <h5 className='font-medium text-sm'>2 mins away </h5>
                     <p className='font-normal text-xs text-gray-600'>Affordable, compact rides</p>
                 </div>
