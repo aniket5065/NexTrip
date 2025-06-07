@@ -18,6 +18,7 @@ module.exports.createRide = async (req, res) => {
         res.status(201).json(ride);
 
         const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
+        console.log('Pickup Coordinates:', pickupCoordinates);
 
         const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 1000);
         console.log('Captains in Radius:', captainsInRadius);

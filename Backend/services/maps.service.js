@@ -6,7 +6,9 @@ module.exports.getAddressCoordinate = async (address) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
     try {
+        console.log(`Fetching coordinates for: ${address}`);
         const response = await axios.get(url);
+        console.log('Geocode API Response:', response.data);
         if (response.data.status === 'OK') {
             const location = response.data.results[ 0 ].geometry.location;
             return {
@@ -68,7 +70,7 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
             throw new Error('Unable to fetch suggestions');
         }
     } catch (err) {
-        console.error(err);
+        console.error(err.message);
         throw err;
     }
 }
