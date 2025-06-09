@@ -4,10 +4,11 @@ import { useEffect, useContext } from 'react'
 import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import LiveTracking from '../components/LiveTracking'
+import axios from 'axios'
 
 const Riding = () => {
     const location = useLocation()
-    const { ride } = location.state || {} // Retrieve ride data
+    const { ride } = location.state || {} 
     const { socket } = useContext(SocketContext)
     const navigate = useNavigate()
 
@@ -15,7 +16,53 @@ const Riding = () => {
         navigate('/home')
     })
 
+   const handlePayment = async () => {
+    try {
+        if (!window.Razorpay) {
+            alert('Razorpay SDK not loaded. Please check your internet connection.');
+            return;
+        }
 
+        // Step 1: Create an order on the backend
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/payments/create-order`, {
+            amount: ride?.fare // Pass the ride fare as the amount
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        const { id: order_id, amount, currency } = response.data;
+
+        // Step 2: Open Razorpay payment modal
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Add Razorpay Key ID to .env
+            amount,
+            currency,
+            name: 'NexTrip',
+            description: 'Ride Payment',
+            order_id,
+            handler: async (response) => {
+                // Step 3: Handle payment success
+                console.log('Payment Success:', response);
+                alert('Payment Successful!');
+            },
+            prefill: {
+                name: ride?.user?.fullname?.firstname,
+                email: ride?.user?.email,
+            },
+            theme: {
+                color: '#3399cc'
+            }
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+    } catch (err) {
+        console.error('Payment Error:', err);
+        alert('Payment Failed!');
+    }
+};
     return (
         <div className='h-screen'>
             <Link to='/home' className='fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full'>
@@ -55,7 +102,12 @@ const Riding = () => {
                         </div>
                     </div>
                 </div>
-                <button className='w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg'>Make a Payment</button>
+                <button
+                    onClick={handlePayment}
+                    className='w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg'
+                >
+                    Make a Payment
+                </button>
             </div>
         </div>
     )
