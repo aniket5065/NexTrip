@@ -39,6 +39,13 @@ router.post('/end-ride',
     rideController.endRide
 )
 
+router.post('/feedback',
+    authMiddleware.authUser,
+    body('rideId').isMongoId().withMessage('Invalid ride ID'),
+    body('feedback').isString().isLength({ min: 3 }).withMessage('Feedback must be at least 3 characters long'),
+    body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
+    rideController.submitFeedback
+);
 
 
 module.exports = router;

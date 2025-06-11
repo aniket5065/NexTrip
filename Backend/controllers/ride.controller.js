@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const mapService = require('../services/maps.service');
 const { sendMessageToSocketId } = require('../socket');
 const rideModel = require('../models/ride.model');
+const feedbackModel = require('../models/feedback.model');
 
 
 module.exports.createRide = async (req, res) => {
@@ -135,3 +136,33 @@ module.exports.endRide = async (req, res) => {
         return res.status(500).json({ message: err.message });
     } s
 }
+module.exports.submitFeedback = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { rideId, feedback, rating } = req.body;
+
+    try {
+        const ride = await rideModel.findById(rideId).populate('user').populate('captain');
+        if (!ride) {
+            return res.status(404).json({ message: 'Ride not found' });
+        }
+
+        const newFeedback = new feedbackModel({
+            ride: ride._id,
+            user: ride.user._id,
+            captain: ride.captain._id,
+            feedback,
+            rating,
+        });
+
+        await newFeedback.save();
+
+        res.status(200).json({ message: 'Feedback submitted successfully', feedback: newFeedback });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to submit feedback' });
+    }
+};
